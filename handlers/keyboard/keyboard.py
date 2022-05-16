@@ -44,7 +44,6 @@ buttons_month = [
 kb_reports = types.ReplyKeyboardMarkup([
     [
         types.KeyboardButton(text="Отчёт в exele"),
-        types.KeyboardButton(text="Отчёт в pdf"),
     ],
     [
         'заново'

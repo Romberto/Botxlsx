@@ -198,11 +198,11 @@ class PDFmaker():
         date_start = self.start_month + '_' + self.start_year
         date_end = self.end_month + '_' + self.end_year
 
-        result.append(f'*{self.article}  {company}\n')
-        result.append('\n')
-        result.append(f'!период с {date_start} по {date_end}   \n')
+        result.append(f'*{self.article}  {company}')
 
-        result.append('\n')
+        result.append(f'!период с {date_start} по {date_end}')
+
+
         return result
 
     # формирует отчёт pdf
@@ -222,17 +222,16 @@ class PDFmaker():
         for x in f:
             if x.startswith('!'):
                 x = x.replace("!", "")
-                pdf.set_text_color(204, 54, 136)
-                pdf.set_font("FreeSansBo", style='B', size=18)
+                pdf.set_text_color(0, 0, 10)
+                pdf.set_font("FreeSansBo", style='B', size=14)
 
             if x.startswith('*'):
                 x = x.replace("*", "")
-                pdf.set_text_color(255, 0, 0)
-                pdf.set_font("FreeSansBo", style='B', size=14)
+                pdf.set_text_color(0, 0, 10)
+                pdf.set_font("FreeSansBo", style='B', size=18)
             if x.endswith('\n'):
                 x = x.replace('\n', '')
-            pdf.cell(50, 5, txt=x, ln=10)
-            pdf.set_font("FreeSans", size=12)
+            pdf.cell(50, 8, txt=x, ln=10)
             pdf.set_text_color(0, 0, 10)
         old_volume = self.filter_old_database()
         report_dict = self.get_region_list(self.article)
@@ -247,16 +246,16 @@ class PDFmaker():
         for a, b in enumerate(t):
             if a == 0:
                 b = b.replace("!", "")
-                pdf.set_text_color(204, 54, 136)
-                pdf.set_font("FreeSansBo", style='B', size=18)
-                pdf.cell(50, 18, str(b), align='J', border=0)
+                pdf.set_text_color(0, 0, 10)
+                pdf.set_font("FreeSansBo", style='B', size=14)
+                pdf.cell(50, 8, str(b), align='J', border=0)
             elif a == 1:
                 b = b.replace("!", "")
-                pdf.set_text_color(204, 54, 136)
-                pdf.set_font("FreeSansBo", style='B', size=18)
+                pdf.set_text_color(0, 0, 10)
+                pdf.set_font("FreeSansBo", style='B', size=14)
                 b = str(b)
                 b = delimiter_volume(b)
-                pdf.cell(50, 18, str(b), align='J', border=0, ln=1)
+                pdf.cell(50, 8, str(b), align='J', border=0, ln=1)
 
         date_start = self.start_month + '_' + str(int(self.start_year) - 1)
         date_end = self.end_month + '_' + str(int(self.end_year) - 1)
@@ -278,8 +277,6 @@ class PDFmaker():
                     b = ' -' + b
                     pdf.set_text_color(255, 0, 0)
                 pdf.cell(30, 12, str(b), align='J', border=0, ln=1)
-            # высота ячейки
-
         #  ширина ячеек
         col_width = 150
         # проходимся по списку с данными
@@ -293,41 +290,35 @@ class PDFmaker():
                 q = len(row[1])
                 line_height = (pdf.font_size) * (q+0.6)
 
-
-
+            pdf.set_font("FreeSans", size=11)
             for x, y in enumerate(row):
-                if (x == 0):  ## dynamically change the column width with certain conditions
+                if (x == 0):  # dynamically change the column width with certain conditions
                     if y.startswith('*'):
                         y = y.replace("*", "")
                         pdf.set_text_color(255, 0, 0)
-                        pdf.set_font("FreeSansBo", style='B', size=11)
-                        pdf.cell(col_width - 30, line_height, str(y), align='J',
+                        pdf.cell(col_width - 50, line_height, str(y), align='J',
                                  border=1)  ## width = 2.0                      pdf.set_text_color(0, 0, 10)
                     else:
-                        pdf.cell(col_width - 30, line_height, str(y[:40]), align='J', border=1, )
+                        pdf.cell(col_width - 50, line_height, str(y[:40]), align='J', border=1, )
 
                 elif (x == 1):
                     if type(y) == str:
                         if y.startswith('*'):
                             y = y.replace("*", "")
                             pdf.set_text_color(255, 0, 0)
-                            pdf.set_font("FreeSansBo", style='B', size=11)
-                            # y = delimiter_volume(y)
-                            pdf.cell(30, line_height, str(y), align='C', border=1)  ## width = 2.0
+                            pdf.cell(50, line_height, str(y), align='C', border=1)  ## width = 2.0
                             pdf.set_text_color(0, 0, 10)
                         else:
-                            pdf.cell(30, line_height, str(y), align='C', border=1)
+                            pdf.cell(50, line_height, str(y), align='C', border=1)
                     else:
-                        pdf.set_font("FreeSansBo", style='B', size=11)
-                        offset = pdf.x + 30
+                        offset = pdf.x + 50
                         top = pdf.y
                         for stan in y:
                             offsetst = pdf.x
                             topst = pdf.y + line_height/(q)
-                            pdf.cell(30,line_height/(q),stan,align='C',border=1)
+                            pdf.cell(50,line_height/(q),stan,align='C',border=1)
                             pdf.x = offsetst
                             pdf.y = topst
-                        # pdf.multi_cell(30, line_height, stantions, align='C', border=1, )  ## width = 2.0
                         pdf.x = offset
                         pdf.y = top
                         pdf.set_text_color(0, 0, 10)
@@ -335,13 +326,13 @@ class PDFmaker():
                     if y.startswith('*'):
                         y = y.replace("*", "")
                         pdf.set_text_color(255, 0, 0)
-                        pdf.set_font("FreeSansBo", style='B', size=11)
                         y = delimiter_volume(y)
-                        pdf.cell(30, line_height, str(y), align='C', border=1, ln=1)  ## width = 2.0
+                        pdf.cell(20, line_height, str(y), align='C', border=1, ln=1)  ## width = 2.0
                         pdf.set_text_color(0, 0, 10)
                     else:
                         y = str(y)
                         y = delimiter_volume(y)
-                        pdf.cell(30, line_height, str(y), align='C', border=1, ln=1)
+                        pdf.cell(20, line_height, str(y), align='C', border=1, ln=1)
+
         pdf.output(text_output)
         self.make_report_LookingReport()

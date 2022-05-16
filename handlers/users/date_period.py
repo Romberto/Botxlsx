@@ -8,6 +8,7 @@ from handlers.callback_data.callback import callback_years, callback_month
 from handlers.keyboard.keyboard import buttons_month, buttons_year, kb_start, kb_on_start, kb_reports
 from handlers.states.state import MainState
 from loader import dp
+from manager.PDFmaker import PDFmaker
 
 
 @dp.callback_query_handler(callback_years.filter(year=['2019', '2020', '2021', '2022', 'month']),
@@ -27,8 +28,33 @@ async def end_date(call: types.CallbackQuery, state: FSMContext, callback_data: 
         await state.update_data(start_year=year, end_year=year, start_month=month, end_month=month)
 
         await call.message.answer('отчёт готов ...', reply_markup=kb_reports)
-        await MainState.report_filter.set()
 
+        await MainState.report_filter.set()
+        # отправка pdf
+        chat_id = call.message.chat.id
+        data = await state.get_data()
+        name_company = data['chosen_name_company'].replace(' ', "_")
+
+        filter_dict = {
+            'chosen_name_company': data["chosen_name_company"],
+            'start_year': data["start_year"],
+            'start_month': data["start_month"],
+            'end_year': data['end_year'],
+            'end_month': data['end_month'],
+            'article': data['article']
+        }
+
+        pdf = PDFmaker(filter_dict, chat_id)
+        if pdf.filter_database():
+            pdf.pdf_maker(f'data/DATA_{chat_id}_name_company_{name_company}.pdf')
+
+            doc = open(f'data/DATA_{chat_id}_name_company_{name_company}.pdf', mode='rb')
+            await call.message.answer_document(doc, reply_markup=kb_reports)
+            doc.close()
+            return
+        else:
+            await call.message.answer(f'{data["article"]} в этом периоде не найден')
+            return
 
 
     else:
@@ -105,3 +131,28 @@ async def get_mouth(call: types.CallbackQuery, state: FSMContext, callback_data:
 
     await MainState.report_filter.set()
     await call.message.answer('отчёт готов ...', reply_markup=kb_reports)
+    # отправка pdf
+    chat_id = call.message.chat.id
+    data = await state.get_data()
+    name_company = data['chosen_name_company'].replace(' ', "_")
+
+    filter_dict = {
+        'chosen_name_company': data["chosen_name_company"],
+        'start_year': data["start_year"],
+        'start_month': data["start_month"],
+        'end_year': data['end_year'],
+        'end_month': data['end_month'],
+        'article': data['article']
+    }
+
+    pdf = PDFmaker(filter_dict, chat_id)
+    if pdf.filter_database():
+        pdf.pdf_maker(f'data/DATA_{chat_id}_name_company_{name_company}.pdf')
+
+        doc = open(f'data/DATA_{chat_id}_name_company_{name_company}.pdf', mode='rb')
+        await call.message.answer_document(doc, reply_markup=kb_reports)
+        doc.close()
+        return
+    else:
+        await call.message.answer(f'{data["article"]} в этом периоде не найден')
+        return

@@ -20,8 +20,8 @@ class PDFmaker():
 
     def make_report_LookingReport(self):
         user = Users.select().where(Users.chat_id == self.chat_id).first()
-        description = f"отчёт формировал :{user.first_name} {user.last_name}\n" \
-                      f"компания {self.article} {self.name_company}\n" \
+        description = f"отчёт формировал :{user.first_name} {user.last_name}" \
+                      f"компания {self.article} {self.name_company}" \
                       f"период выборки с {self.start_month}.{self.start_year} по {self.end_month}.{self.end_year}"
         lr = LookingReport()
         lr.create_table(safe=True)
@@ -290,7 +290,7 @@ class PDFmaker():
                 q = len(row[1])
                 line_height = (pdf.font_size) * (q+0.6)
 
-            pdf.set_font("FreeSans", size=11)
+            pdf.set_font("FreeSans", size=10)
             for x, y in enumerate(row):
                 if (x == 0):  # dynamically change the column width with certain conditions
                     if y.startswith('*'):

@@ -5,6 +5,7 @@ from .cb_load_xlsx import dp
 from .chose_company import dp
 from .date_period import dp
 from .chose_report import dp
+from .look_reports import dp
 
 
 __all__ = ['dp']

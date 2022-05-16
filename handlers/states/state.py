@@ -11,3 +11,8 @@ class MainState(StatesGroup):
 class LoadState(StatesGroup):
     step_load = State()
     step_update = State()
+
+
+class LookState(StatesGroup):
+    sp_command = State()
+    sp_look = State()

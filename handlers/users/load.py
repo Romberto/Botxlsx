@@ -3,9 +3,34 @@ import types
 
 from data.config import FILE_PATH_XLSX, admins_id
 from handlers.keyboard.keyboard import *
-from handlers.states.state import LoadState
+from handlers.states.state import LoadState, LookState
 from loader import dp
 
+
+
+@dp.message_handler(text="/look")
+async def look(message: types.Message):
+    if message.chat.id in admins_id:
+        kb_look_menu = types.InlineKeyboardMarkup(row_width=1)
+        buttons = [
+            types.InlineKeyboardButton(text="Отчёты за сегодня", callback_data="r1"),
+            types.InlineKeyboardButton(text="Отчёты за последние 3 дня", callback_data="r3"),
+            types.InlineKeyboardButton(text="Отчёты за последние 7 дней", callback_data="r7"),
+            types.InlineKeyboardButton(text="выйти", callback_data="end")
+        ]
+        kb_look_menu.add(*buttons)
+        await LookState.sp_look.set()
+        await message.answer("Укажите за какой период, просмотреть информацию о отчётах", reply_markup=kb_look_menu)
+    else:
+        try:
+            await message.answer(
+                f'извените {message.from_user.first_name} у вас нет прав для этой команды, обратитесь к администратору',
+                reply_markup=kb_start)
+        except Exception as er:
+
+            await message.answer(
+                'извените у вас нет прав для этой команды, обратитесь к администратору',
+                reply_markup=kb_start)
 
 @dp.message_handler(commands="load")
 async def load_xlsx(message: types.Message):

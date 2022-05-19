@@ -20,9 +20,9 @@ class PDFmaker():
 
     def make_report_LookingReport(self):
         user = Users.select().where(Users.chat_id == self.chat_id).first()
-        description = f"отчёт формировал :{user.first_name} {user.last_name}" \
-                      f"компания {self.article} {self.name_company}" \
-                      f"период выборки с {self.start_month}.{self.start_year} по {self.end_month}.{self.end_year}"
+        description = f" отчёт формировал :{user.first_name} {user.last_name} " \
+                      f" компания {self.article} {self.name_company} " \
+                      f" период выборки с {self.start_month}.{self.start_year} по {self.end_month}.{self.end_year}"
         lr = LookingReport()
         lr.create_table(safe=True)
         lr.create(
@@ -113,6 +113,7 @@ class PDFmaker():
                 consumer = item['Потребитель']
                 vol = item['Объем, тн']
                 volume = Decimal(vol).quantize(Decimal('1.'), rounding=ROUND_UP)
+
                 if not region in result.keys():
                     stantions = []
                     stantions.append(stantion)
@@ -147,20 +148,35 @@ class PDFmaker():
                 stantion = item['Станция отправления']
 
                 if not region in result.keys():
-                    stantions = [stantion]
+                    stantions = []
+                    stantions.append(stantion)
                     result[region] = {consumer: [volume, stantions]}
                 else:
                     if consumer in result[region].keys():
+                        st = result[region][consumer][1]
+                        if not stantion in result[region][consumer][1]:
+                            st.append(stantion)
                         vol = result[region][consumer][0] + volume
-                        stantions = result[region][consumer][1]
-                        if not stantion in stantions:
-                            stantions.append(stantion)
-                        result[region].update({consumer: [vol, stantions]})
+                        result[region].update({consumer: [vol, st]})
                     else:
-                        stantions = result[region][consumer][1]
-                        if not stantion in stantions:
-                            stantions.append(stantion)
-                        result[region].update({consumer: [volume, stantions]})
+                        st = [stantion]
+                        result[region].update({consumer: [volume, st]})
+
+                # if not region in result.keys():
+                #     stantions = [stantion]
+                #     result[region] = {consumer: [volume, stantions]}
+                # else:
+                #     if consumer in result[region].keys():
+                #         vol = result[region][consumer][0] + volume
+                #         stantions = result[region][consumer][1]
+                #         if not stantion in stantions:
+                #             stantions.append(stantion)
+                #         result[region].update({consumer: [vol, stantions]})
+                #     else:
+                #         stantions = result[region][consumer][1]
+                #         if not stantion in stantions:
+                #             stantions.append(stantion)
+                #         result[region].update({consumer: [volume, stantions]})
 
             summa = 0
             for reg, data in result.items():

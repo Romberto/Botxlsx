@@ -147,8 +147,8 @@ async def get_mouth(call: types.CallbackQuery, state: FSMContext, callback_data:
 
     pdf = PDFmaker(filter_dict, chat_id)
     if pdf.filter_database():
+        print('fffff')
         pdf.pdf_maker(f'data/DATA_{chat_id}_name_company_{name_company}.pdf')
-
         doc = open(f'data/DATA_{chat_id}_name_company_{name_company}.pdf', mode='rb')
         await call.message.answer_document(doc, reply_markup=kb_reports)
         doc.close()

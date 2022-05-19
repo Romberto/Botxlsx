@@ -37,7 +37,15 @@ def looking_report(i: int):
                 pdf.multi_cell(145, 8, text, align='J', border=1)
 
     pdf.output('data/report.pdf')
-
+def main():
+    today = datetime.datetime.today()
+    time = datetime.time(0, 0, 0)
+    delta_day = datetime.datetime.combine(today, time)
+    now = datetime.datetime.now()
+    print(delta_day)
+    print(now)
+    if now<delta_day:
+        print('rrr')
 
 if __name__ == '__main__':
-    looking_report(1)
+    main()
